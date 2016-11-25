@@ -103,27 +103,30 @@ function bsf_mautic_contact_setting_page() {
 		?>
 		<!-- Base Url -->
 		<div class="form-setting">
-			<h4><?php _e( 'Base URL', 'bsfmautic' ); ?></h4>
-			<p class="admin-help">
-				<?php _e('This setting is required for Mautic Integration.', 'bsfmautic'); ?>
-			</p>
+			<h4><?php _e( 'Base URL', 'mautic-contacts-count' ); ?></h4>
 			<input type="text" class="regular-text" name="bsfm-base-url" value="<?php echo $bsfm_base_url; ?>" class="mautic-contacts-count-text" />
+			<p class="admin-help">
+				<?php _e('The Base URL is the URL where Mautic is installed.<br>The base URL is something like https://*your-name*.mautic.net', 'mautic-contacts-count'); ?>
+			</p>
 		</div>
 		<!-- Client Public Key -->
 		<div class="form-setting">
-			<h4><?php _e( 'Public Key', 'bsfmautic' ); ?></h4>
+			<h4><?php _e( 'Public Key', 'mautic-contacts-count' ); ?></h4>
 			<input type="text" class="regular-text" name="bsfm-public-key" value="<?php echo $bsfm_public_key; ?>" class="mautic-contacts-count-text" />
 		</div>
 		<!-- Client Secret Key -->
 		<div class="form-setting">
-			<h4><?php _e( 'Secret Key', 'bsfmautic' ); ?></h4>	
+			<h4><?php _e( 'Secret Key', 'mautic-contacts-count' ); ?></h4>	
 			<input type="text" class="regular-text" name="bsfm-secret-key" value="<?php echo $bsfm_secret_key; ?>" class="mautic-contacts-count-text" />
 		</div>
+		<p class="admin-help">
+			<?php _e('First Go to Mautic Configuration / API Settings and set ‘API enabled’ to ‘Yes’. Save changes. <br> then go to API Credentials and create public and secret key', 'mautic-contacts-count'); ?>
+		</p>
 		<p class="submit">
 			<input type="submit" name="bsfm-save-authenticate" class="button-primary" value="<?php esc_attr_e( 'Save and Authenticate', 'mautic-contacts-count' ); ?>" />
 		</p>
-		<?php _e('Get All Mautic Contacts Count using simple shortcode [mautic-contacts-count]', 'mautic-contacts-count');
-		wp_nonce_field('bsfmauticcnt', 'bsf-mautic-cnt-nonce'); ?>
+		<h4><?php _e('Get All Mautic Contacts Count using simple shortcode [mautic-contacts-count]', 'mautic-contacts-count');
+		wp_nonce_field('bsfmauticcnt', 'bsf-mautic-cnt-nonce'); ?></h4>
 	</form>
 <?php
 }
