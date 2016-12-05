@@ -124,7 +124,7 @@ function bsf_mautic_contact_setting_page() {
 		<p class="submit">
 			<input type="submit" name="bsfm-save-authenticate" class="button-primary" value="<?php esc_attr_e( 'Save and Authenticate', 'mautic-contacts-count' ); ?>" />
 		</p>
-		<h4><?php _e('Get All Mautic Contacts Count using simple shortcode [mautic-contacts-count]', 'mautic-contacts-count');
+		<h4><?php _e('Get All Mautic Contacts Count using simple shortcode [mauticcount]', 'mautic-contacts-count');
 		wp_nonce_field('bsfmauticcnt', 'bsf-mautic-cnt-nonce'); ?></h4>
 	</form>
 <?php
