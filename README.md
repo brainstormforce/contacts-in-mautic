@@ -1,6 +1,6 @@
 # Mautic Contacts Count
 
-A very useful plugin to display your mautic contacts count on your website. This plugin generate the shortcode [mautic-contacts-count]. Use this shortocde in your website & share your happy :) customer count with visitors.
+A very useful plugin to display your mautic contacts count on your website. This plugin generate the shortcode [mauticcount]. Use this shortocde in your website & share your happy :) customer count with visitors.
 
 
 # Configurations
@@ -13,4 +13,4 @@ A very useful plugin to display your mautic contacts count on your website. This
 
 * To display all contacts use following shorcode
 
-`[mautic-contacts-count]`
+`[mauticcount]`

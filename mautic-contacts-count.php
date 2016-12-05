@@ -1,10 +1,9 @@
 <?php
-//ob_clean(); ob_start();
 /**
  * @wordpress-plugin
  * Plugin Name:       Mautic Conatacts Count
  * Plugin URI:        http://brainstormforce.com
- * Description:       Get All Mautic Contacts Count using simple shortcode [mautic-contacts]
+ * Description:       Get All Mautic Contacts Count using simple shortcode [mauticcount]
  * Version:           1.0.0
  * Author:            Brainstorm Force
  * Author URI:        http://brainstormforce.com
@@ -14,7 +13,7 @@
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
-add_shortcode( 'mautic-contacts-count', 'bsf_mautic_cnt_scode' );
+add_shortcode( 'mauticcount', 'bsf_mautic_cnt_scode' );
 add_action( 'admin_menu', 'bsf_mautic_menu' );
 add_action( 'admin_init', 'bsf_mautic_cnt_set_code' );
 function bsf_mautic_cnt_set_code() {
