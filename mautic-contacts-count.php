@@ -16,6 +16,7 @@ if ( ! defined( 'WPINC' ) ) {
 add_shortcode( 'mauticcount', 'bsf_mautic_cnt_scode' );
 add_action( 'admin_menu', 'bsf_mautic_menu' );
 add_action( 'admin_init', 'bsf_mautic_cnt_set_code' );
+add_action( 'wp_loaded', 'bsf_cnt_authenticate_update' );
 function bsf_mautic_cnt_set_code() {
 	if( isset($_GET['code']) ) {
 		$credentials = get_option( '_bsf_mautic_cnt_credentials' );
@@ -85,7 +86,6 @@ function bsf_mautic_contact_setting_page() {
 		else {
 			update_option( '_bsf_mautic_cnt_config', $bsfm );
 		}		
-		bsf_cnt_authenticate_update();
 	}
 ?>
 	<h3> Configure Mautic</h3>
@@ -124,7 +124,7 @@ function bsf_mautic_contact_setting_page() {
 		<p class="submit">
 			<input type="submit" name="bsfm-save-authenticate" class="button-primary" value="<?php esc_attr_e( 'Save and Authenticate', 'mautic-contacts-count' ); ?>" />
 		</p>
-		<h4><?php _e('Get All Mautic Contacts Count using simple shortcode [mauticcount]', 'mautic-contacts-count');
+		<h4><?php _e('Get All Mautic Contacts Count using simple shortcode [mautic-contacts-count]', 'mautic-contacts-count');
 		wp_nonce_field('bsfmauticcnt', 'bsf-mautic-cnt-nonce'); ?></h4>
 	</form>
 <?php
@@ -160,6 +160,11 @@ function bsf_mautic_get_access_token($grant_type) {
 	return $response;
 }
 function bsf_cnt_authenticate_update() {
+
+	if ( isset( $_GET['state'] ) ) {
+		return;
+	}
+
 	$mautic_api_url = $bsfm_public_key = $bsfm_secret_key = '';
 	$post = $_POST;
 	$cpts_err = false;
