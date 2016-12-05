@@ -161,7 +161,7 @@ function bsf_mautic_get_access_token($grant_type) {
 }
 function bsf_cnt_authenticate_update() {
 
-	if ( isset( $_GET['state'] ) ) {
+	if ( ! isset( $_POST['bsf-mautic-cnt-nonce'] ) ) {
 		return;
 	}
 
