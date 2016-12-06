@@ -13,9 +13,9 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 add_action( 'admin_init', 'bsf_mautic_cnt_set_code' );
-add_shortcode( 'mauticcount', 'bsf_mautic_cnt_scode' );
 add_action( 'admin_menu', 'bsf_mautic_menu' );
 add_action( 'wp_loaded', 'bsf_cnt_authenticate_update' );
+add_shortcode( 'mauticcount', 'bsf_mautic_cnt_scode' );
 function bsf_mautic_cnt_set_code() {
 	if( isset( $_GET['code'] ) ) {
 		$credentials = get_option( '_bsf_mautic_cnt_credentials' );
@@ -49,33 +49,34 @@ function bsf_mautic_cnt_scode() {
 				update_option( '_bsf_mautic_cnt_credentials', $credentials );
 			}
 		} // refresh code token ends
+		$credentials = get_option( '_bsf_mautic_cnt_credentials' );
+		$access_token = isset($credentials['access_token'])?$credentials['access_token']:'';
+		$response = '';
 
-			// add contacts
-			$credentials = get_option( '_bsf_mautic_cnt_credentials' );
-			$access_token = isset($credentials['access_token'])?$credentials['access_token']:'';
-			$response = '';
-			if( ! empty($access_token) ) {
-				$url = $credentials['baseUrl'] .'/api/contacts?access_token='.$access_token;
-				$response = wp_remote_get( $url );
+		if( ! empty($access_token) ) {
+			$url = $credentials['baseUrl'] .'/api/contacts?access_token='.$access_token;
+			$response = wp_remote_get( $url );
+			if ( ! is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) === 200 ) {
 				$response_body = $response['body'];
 				$contacts_details = json_decode($response_body);
 			}
-			if ( is_wp_error( $response ) ) {
-				$errorMsg = $response->get_error_message();
-				$status = 'error';
-			} else {
-				if( is_array($response) ) {
-					$response_code = $response['response']['code'];
-					if( $response_code != 201 ) {
-						if( $response_code != 200 ) {
-							$ret = false;
-							$status = 'error';
-							$errorMsg = isset( $response['response']['message'] ) ? $response['response']['message'] : '';
-							echo $errorMsg;
-						}
+		}
+		if ( is_wp_error( $response ) ) {
+			$errorMsg = $response->get_error_message();
+			$status = 'error';
+		} else {
+			if( is_array($response) ) {
+				$response_code = $response['response']['code'];
+				if( $response_code != 201 ) {
+					if( $response_code != 200 ) {
+						$ret = false;
+						$status = 'error';
+						$errorMsg = isset( $response['response']['message'] ) ? $response['response']['message'] : '';
+						echo $errorMsg;
 					}
 				}
 			}
+		}
 	if( isset( $contacts_details->total ) ) {
 		set_transient( 'bsf_mautic_contact_count', $contacts_details->total, DAY_IN_SECONDS );
 		return $contacts_details->total;
@@ -95,7 +96,6 @@ function bsf_mautic_contact_setting_page() {
 	<h3> Configure Mautic</h3>
 	<form id="mautic-config-form" action="<?php echo admin_url( 'options-general.php?page=mautic-count'); ?>" method="post">
 		<?php
-			//$bsfm = get_option('_bsf_mautic_config');
 			$bsfm = get_option('_bsf_mautic_cnt_config');
 			$bsfm_base_url = $bsfm_public_key = $bsfm_secret_key = '';
 			if( is_array($bsfm) ) {
@@ -128,16 +128,16 @@ function bsf_mautic_contact_setting_page() {
 		<p class="submit">
 			<input type="submit" name="bsfm-save-authenticate" class="button-primary" value="<?php esc_attr_e( 'Save and Authenticate', 'mautic-contacts-count' ); ?>" />
 		</p>
-		<h4><?php _e('Get All Mautic Contacts Count using simple shortcode [mauticcount]', 'mautic-contacts-count');
-		wp_nonce_field('bsfmauticcnt', 'bsf-mautic-cnt-nonce'); ?></h4>
+		<?php wp_nonce_field('bsfmauticcnt', 'bsf-mautic-cnt-nonce'); ?></h4>
 	</form>
+	<p class="admin-help"> <?php _e('If shortcode is not displaying correct count, Refresh contacts count.', 'mautic-contacts-count'); ?> </p>
 	<form id="mautic-config-clearcount" action="<?php echo admin_url( 'options-general.php?page=mautic-count'); ?>" method="post">
 		<p class="submit">
 			<input type="submit" name="bsfm-refresh-count" class="button-primary" value="<?php esc_attr_e( 'Refresh Contact Count', 'mautic-contacts-count' ); ?>" />
 			<?php wp_nonce_field('bsfclrmauticcnt', 'bsf-mautic-clr-cnt-nonce'); ?>
 		</p>
 	</form>
-<?php
+	<h4><?php _e('Get All Mautic Contacts Count using simple shortcode [mauticcount]', 'mautic-contacts-count');
 }
 function bsf_mautic_get_access_token($grant_type) {
 	$credentials = get_option('_bsf_mautic_cnt_credentials');
@@ -190,7 +190,6 @@ function bsf_cnt_authenticate_update() {
 		else {
 			update_option( '_bsf_mautic_cnt_config', $bsfm );
 		}
-		//bsf_cnt_authenticate_update();
 	}
 	$mautic_api_url = $bsfm_public_key = $bsfm_secret_key = '';
 	$post = $_POST;
@@ -202,12 +201,12 @@ function bsf_cnt_authenticate_update() {
 	$bsfm_secret_key = isset( $post['bsfm-secret-key'] ) ? esc_attr( $post['bsfm-secret-key'] ) : '';
 	if( $mautic_api_url == '' ) {	
 		$status = 'error';
-		$message = 'API URL is missing.';
+		_e( 'API URL is missing.', 'mautic-contacts-count' ); 
 		$cpts_err = true;
 	}
 	if( $bsfm_secret_key == '' ) {
 		$status = 'error';
-		$message = 'Secret Key is missing.';
+		_e( 'Secret Key is missing.', 'mautic-contacts-count' ); 
 		$cpts_err = true;
 	}
 	$settings = array(
@@ -234,7 +233,6 @@ function bsf_get_mautic_data() {
 		return;	
 	}
 	if( !isset( $credentials['access_token'] ) ) {
-
 			$grant_type = 'authorization_code';
 			
 			$response = bsf_mautic_get_access_token( $grant_type );
@@ -243,7 +241,8 @@ function bsf_get_mautic_data() {
 
 			if( isset( $access_details->error ) ) {
 				echo json_encode($result);
-				exit('unable to connect');
+				_e( 'Unable to Connect', 'mautic-contacts-count' ); 
+				exit();
 			}
 			$expiration = time() + $access_details->expires_in;
 			$credentials['access_token'] = $access_details->access_token;
