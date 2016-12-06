@@ -14,3 +14,6 @@ A very useful plugin to display your mautic contacts count on your website. This
 * To display all contacts use following shorcode
 
 `[mauticcount]`
+
+# How To Get Mautic API Credentials 
+Refer [this doc](http://docs.sharkz.in/how-to-get-mautic-api-credentials/) to know How to get mautic credentials.

@@ -109,7 +109,7 @@ function bsf_mautic_contact_setting_page() {
 			<h4><?php _e( 'Base URL', 'mautic-contacts-count' ); ?></h4>
 			<input type="text" class="regular-text" name="bsfm-base-url" value="<?php echo $bsfm_base_url; ?>" class="mautic-contacts-count-text" />
 			<p class="admin-help">
-				<?php _e('The Base URL is the URL where Mautic is installed.<br>The base URL is something like https://*your-name*.mautic.net', 'mautic-contacts-count'); ?>
+				<?php _e('URL of your Mautic instance you want to connect with. eg. https://*your-name*.mautic.net', 'mautic-contacts-count'); ?>
 			</p>
 		</div>
 		<!-- Client Public Key -->
@@ -123,7 +123,7 @@ function bsf_mautic_contact_setting_page() {
 			<input type="text" class="regular-text" name="bsfm-secret-key" value="<?php echo $bsfm_secret_key; ?>" class="mautic-contacts-count-text" />
 		</div>
 		<p class="admin-help">
-			<?php _e('First Go to Mautic Configuration / API Settings and set ‘API enabled’ to ‘Yes’. Save changes. <br> then go to API Credentials and create public and secret key', 'mautic-contacts-count'); ?>
+			<?php _e('Need help to get Mautic API credentials? Read <a target="_blank" href="http://docs.sharkz.in/how-to-get-mautic-api-credentials/">this article</a> for more information.', 'mautic-contacts-count'); ?>
 		</p>
 		<p class="submit">
 			<input type="submit" name="bsfm-save-authenticate" class="button-primary" value="<?php esc_attr_e( 'Save and Authenticate', 'mautic-contacts-count' ); ?>" />
@@ -137,7 +137,7 @@ function bsf_mautic_contact_setting_page() {
 			<?php wp_nonce_field('bsfclrmauticcnt', 'bsf-mautic-clr-cnt-nonce'); ?>
 		</p>
 	</form>
-	<h4><?php _e('Get All Mautic Contacts Count using simple shortcode [mauticcount]', 'mautic-contacts-count');
+	<h4><?php _e('Get Mautic Contacts Count using simple shortcode [mauticcount]', 'mautic-contacts-count');
 }
 function bsf_mautic_get_access_token($grant_type) {
 	$credentials = get_option('_bsf_mautic_cnt_credentials');
