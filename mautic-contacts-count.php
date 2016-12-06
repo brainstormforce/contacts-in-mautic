@@ -17,7 +17,7 @@ add_shortcode( 'mauticcount', 'bsf_mautic_cnt_scode' );
 add_action( 'admin_menu', 'bsf_mautic_menu' );
 add_action( 'wp_loaded', 'bsf_cnt_authenticate_update' );
 function bsf_mautic_cnt_set_code() {
-	if( isset($_GET['code']) ) {
+	if( isset( $_GET['code'] ) ) {
 		$credentials = get_option( '_bsf_mautic_cnt_credentials' );
 		$credentials['access_code'] =  esc_attr( $_GET['code'] );
 		update_option( '_bsf_mautic_cnt_credentials', $credentials );
@@ -25,49 +25,41 @@ function bsf_mautic_cnt_set_code() {
 	}
 }
 function bsf_mautic_cnt_scode() {
-		$method = "GET";
-		$status = 'success';
-		$credentials = get_option( '_bsf_mautic_cnt_credentials' );
-			// if token expired, get new access token
-			if( isset($credentials['expires_in']) && $credentials['expires_in'] < time() ) {
-				$grant_type = 'refresh_token';
-				$response = bsf_mautic_get_access_token( $grant_type );
-
-				if ( ! is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) === 200 ) {
-				  	$errorMsg = $response->get_error_message();
-				    $status = 'error';
-				} else {
-					$access_details = json_decode( $response['body'] );
-					$expiration = time() + $access_details->expires_in;
-					$credentials['access_token'] = $access_details->access_token;
-					$credentials['expires_in'] = $expiration;
-					$credentials['refresh_token'] = $access_details->refresh_token;
-					update_option( '_bsf_mautic_cnt_credentials', $credentials );
-				}
-			} // refresh code token ends
+	$mautic_count_trans = get_transient( 'bsf_mautic_contact_count' );
+	if( $mautic_count_trans ) {
+		return $mautic_count_trans;
+	}
+	$method = "GET";
+	$status = 'success';
+	$contacts_details = '';
+	$credentials = get_option( '_bsf_mautic_cnt_credentials' );
+		// if token expired, get new access token
+		if( isset($credentials['expires_in']) && $credentials['expires_in'] < time() ) {
+			$grant_type = 'refresh_token';
+			$response = bsf_mautic_get_access_token( $grant_type );
+			if ( ! is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) === 200 ) {
+			  	$errorMsg = $response->get_error_message();
+			    $status = 'error';
+			} else {
+				$access_details = json_decode( $response['body'] );
+				$expiration = time() + $access_details->expires_in;
+				$credentials['access_token'] = $access_details->access_token;
+				$credentials['expires_in'] = $expiration;
+				$credentials['refresh_token'] = $access_details->refresh_token;
+				update_option( '_bsf_mautic_cnt_credentials', $credentials );
+			}
+		} // refresh code token ends
 
 			// add contacts
 			$credentials = get_option( '_bsf_mautic_cnt_credentials' );
 			$access_token = isset($credentials['access_token'])?$credentials['access_token']:'';
-
+			$response = '';
 			if( ! empty($access_token) ) {
 				$url = $credentials['baseUrl'] .'/api/contacts?access_token='.$access_token;
 				$response = wp_remote_get( $url );
-
-				echo "<pre>";
-				print_r($response);
-				echo "</pre>";
-
-
-				if( $response->body ) {
-					$response_body = $response['body'];
-					$contacts_details = json_decode($response_body);
-				}
+				$response_body = $response['body'];
+				$contacts_details = json_decode($response_body);
 			}
-			else {
-					return;
-			}
-			
 			if ( is_wp_error( $response ) ) {
 				$errorMsg = $response->get_error_message();
 				$status = 'error';
@@ -84,31 +76,20 @@ function bsf_mautic_cnt_scode() {
 					}
 				}
 			}
-	return $contacts_details->total;
+	if( isset( $contacts_details->total ) ) {
+		set_transient( 'bsf_mautic_contact_count', $contacts_details->total, DAY_IN_SECONDS );
+		return $contacts_details->total;
+	}
+	else {
+		return _e('Something is wrong with mautic authentication. Please authenticate mautic.','mautic-contacts-count');
+	}
 }
 function bsf_mautic_menu() {
 	add_options_page('Mautic Contacts Count', 'Mautic Contacts Count', 'manage_options', 'mautic-count', 'bsf_mautic_contact_setting_page');
 }
 function bsf_mautic_contact_setting_page() {
-
-	if ( isset( $_POST['bsf-mautic-cnt-nonce'] ) && wp_verify_nonce( $_POST['bsf-mautic-cnt-nonce'], 'bsfmauticcnt' ) ) {
-		if( isset( $_POST['bsfm-base-url'] ) ) {	
-			$bsfm['bsfm-base-url'] = esc_url( $_POST['bsfm-base-url'] ); 
-		}
-		if( isset( $_POST['bsfm-public-key'] ) ) {	
-			$bsfm['bsfm-public-key'] = sanitize_key( $_POST['bsfm-public-key'] ); 
-		}
-		if( isset( $_POST['bsfm-secret-key'] ) ) {	
-			$bsfm['bsfm-secret-key'] = sanitize_key( $_POST['bsfm-secret-key'] ); 
-		}
-		// Update the site-wide option since we're in the network admin.
-		if ( is_network_admin() ) {
-			update_site_option( '_bsf_mautic_cnt_config', $bsfm );
-		}
-		else {
-			update_option( '_bsf_mautic_cnt_config', $bsfm );
-		}
-		bsf_cnt_authenticate_update();
+	if ( isset( $_POST['bsf-mautic-clr-cnt-nonce'] ) && wp_verify_nonce( $_POST['bsf-mautic-clr-cnt-nonce'], 'bsfclrmauticcnt' ) ) {
+		delete_transient( 'bsf_mautic_contact_count' );
 	}
 ?>
 	<h3> Configure Mautic</h3>
@@ -150,6 +131,12 @@ function bsf_mautic_contact_setting_page() {
 		<h4><?php _e('Get All Mautic Contacts Count using simple shortcode [mauticcount]', 'mautic-contacts-count');
 		wp_nonce_field('bsfmauticcnt', 'bsf-mautic-cnt-nonce'); ?></h4>
 	</form>
+	<form id="mautic-config-clearcount" action="<?php echo admin_url( 'options-general.php?page=mautic-count'); ?>" method="post">
+		<p class="submit">
+			<input type="submit" name="bsfm-refresh-count" class="button-primary" value="<?php esc_attr_e( 'Refresh Contact Count', 'mautic-contacts-count' ); ?>" />
+			<?php wp_nonce_field('bsfclrmauticcnt', 'bsf-mautic-clr-cnt-nonce'); ?>
+		</p>
+	</form>
 <?php
 }
 function bsf_mautic_get_access_token($grant_type) {
@@ -186,7 +173,25 @@ function bsf_cnt_authenticate_update() {
 	if ( ! isset( $_POST['bsf-mautic-cnt-nonce'] ) ) {
 		return;
 	}
-
+	if ( isset( $_POST['bsf-mautic-cnt-nonce'] ) && wp_verify_nonce( $_POST['bsf-mautic-cnt-nonce'], 'bsfmauticcnt' ) ) {
+		if( isset( $_POST['bsfm-base-url'] ) ) {	
+			$bsfm['bsfm-base-url'] = esc_url( $_POST['bsfm-base-url'] ); 
+		}
+		if( isset( $_POST['bsfm-public-key'] ) ) {	
+			$bsfm['bsfm-public-key'] = sanitize_key( $_POST['bsfm-public-key'] ); 
+		}
+		if( isset( $_POST['bsfm-secret-key'] ) ) {	
+			$bsfm['bsfm-secret-key'] = sanitize_key( $_POST['bsfm-secret-key'] ); 
+		}
+		// Update the site-wide option since we're in the network admin.
+		if ( is_network_admin() ) {
+			update_site_option( '_bsf_mautic_cnt_config', $bsfm );
+		}
+		else {
+			update_option( '_bsf_mautic_cnt_config', $bsfm );
+		}
+		//bsf_cnt_authenticate_update();
+	}
 	$mautic_api_url = $bsfm_public_key = $bsfm_secret_key = '';
 	$post = $_POST;
 	$cpts_err = false;
@@ -225,8 +230,9 @@ function bsf_cnt_authenticate_update() {
 }
 function bsf_get_mautic_data() {
 	$credentials = get_option( '_bsf_mautic_cnt_credentials' );
-	if( ! isset( $credentials['access_code']) ) return;
-
+	if( ! isset( $credentials['access_code']) ) {
+		return;	
+	}
 	if( !isset( $credentials['access_token'] ) ) {
 
 			$grant_type = 'authorization_code';
