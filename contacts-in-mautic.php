@@ -1,12 +1,12 @@
 <?php
 /**
- * Plugin Name:       Mautic Conatacts Count
+ * Plugin Name:       Conatacts in Mautic
  * Plugin URI:        http://brainstormforce.com
- * Description:       Get All Mautic Contacts Count using simple shortcode [mauticcount]
+ * Description:       Get All Mautic Contacts Count using simple shortcode.
  * Version:           1.0.0
- * Author:            Brainstorm Force
+ * Author:            Brainstormforce
  * Author URI:        http://brainstormforce.com
- * Text Domain:       mautic-contacts-count
+ * Text Domain:       contacts-in-mautic
  */
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
@@ -92,7 +92,7 @@ function bsf_mautic_cnt_scode() {
 		return $contacts_details->total;
 	} else {
 
-		return _e( 'Something is wrong with mautic authentication. Please authenticate Mautic.', 'mautic-contacts-count' );
+		return _e( 'Something is wrong with mautic authentication. Please authenticate Mautic.', 'contacts-in-mautic' );
 	}
 }
 
@@ -119,46 +119,46 @@ function bsf_mautic_contact_setting_page() {
 		?>
 		<!-- Base Url -->
 		<div class="form-setting">
-			<h4><?php _e( 'Base URL', 'mautic-contacts-count' ); ?></h4>
+			<h4><?php _e( 'Base URL', 'contacts-in-mautic' ); ?></h4>
 			<input type="text" class="regular-text" name="bsfm-base-url" value="<?php echo $bsfm_base_url; ?>"
-			       class="mautic-contacts-count-text"/>
+			       class="contacts-in-mautic-text"/>
 
 			<p class="admin-help">
-				<?php _e( 'URL of your Mautic instance you want to connect with. eg. https://*your-name*.mautic.net', 'mautic-contacts-count' ); ?>
+				<?php _e( 'URL of your Mautic instance you want to connect with. eg. https://*your-name*.mautic.net', 'contacts-in-mautic' ); ?>
 			</p>
 		</div>
 		<!-- Client Public Key -->
 		<div class="form-setting">
-			<h4><?php _e( 'Public Key', 'mautic-contacts-count' ); ?></h4>
+			<h4><?php _e( 'Public Key', 'contacts-in-mautic' ); ?></h4>
 			<input type="text" class="regular-text" name="bsfm-public-key" value="<?php echo $bsfm_public_key; ?>"
-			       class="mautic-contacts-count-text"/>
+			       class="contacts-in-mautic-text"/>
 		</div>
 		<!-- Client Secret Key -->
 		<div class="form-setting">
-			<h4><?php _e( 'Secret Key', 'mautic-contacts-count' ); ?></h4>
+			<h4><?php _e( 'Secret Key', 'contacts-in-mautic' ); ?></h4>
 			<input type="text" class="regular-text" name="bsfm-secret-key" value="<?php echo $bsfm_secret_key; ?>"
-			       class="mautic-contacts-count-text"/>
+			       class="contacts-in-mautic-text"/>
 		</div>
 		<p class="admin-help">
-			<?php _e( 'Need help to get Mautic API credentials? Read <a target="_blank" href="http://docs.sharkz.in/how-to-get-mautic-api-credentials/">this article</a> for more information.', 'mautic-contacts-count' ); ?>
+			<?php _e( 'Need help to get Mautic API credentials? Read <a target="_blank" href="http://docs.sharkz.in/how-to-get-mautic-api-credentials/">this article</a> for more information.', 'contacts-in-mautic' ); ?>
 		</p>
 
 		<p class="submit">
 			<input type="submit" name="bsfm-save-authenticate" class="button-primary"
-			       value="<?php esc_attr_e( 'Save and Authenticate', 'mautic-contacts-count' ); ?>"/>
+			       value="<?php esc_attr_e( 'Save and Authenticate', 'contacts-in-mautic' ); ?>"/>
 		</p>
 		<?php wp_nonce_field( 'bsfmauticcnt', 'bsf-mautic-cnt-nonce' ); ?></h4>
 	</form>
-	<p class="admin-help"> <?php _e( 'If shortcode is not displaying correct count, Refresh contacts count.', 'mautic-contacts-count' ); ?> </p>
+	<p class="admin-help"> <?php _e( 'If shortcode is not displaying correct count, Refresh contacts count.', 'contacts-in-mautic' ); ?> </p>
 	<form id="mautic-config-clearcount" action="<?php echo admin_url( 'options-general.php?page=mautic-count' ); ?>"
 	      method="post">
 		<p class="submit">
 			<input type="submit" name="bsfm-refresh-count" class="button-primary"
-			       value="<?php esc_attr_e( 'Refresh Contact Count', 'mautic-contacts-count' ); ?>"/>
+			       value="<?php esc_attr_e( 'Refresh Contact Count', 'contacts-in-mautic' ); ?>"/>
 			<?php wp_nonce_field( 'bsfclrmauticcnt', 'bsf-mautic-clr-cnt-nonce' ); ?>
 		</p>
 	</form>
-	<h4><?php _e( 'Get Mautic Contacts Count using simple shortcode [mauticcount]', 'mautic-contacts-count' );
+	<h4><?php _e( 'Get Mautic Contacts Count using simple shortcode [mauticcount]', 'contacts-in-mautic' );
 }
 
 function bsf_mautic_get_access_token( $grant_type ) {
@@ -235,12 +235,12 @@ function bsf_cnt_authenticate_update() {
 	$bsfm_secret_key = isset( $post['bsfm-secret-key'] ) ? esc_attr( $post['bsfm-secret-key'] ) : '';
 	if ( $mautic_api_url == '' ) {
 		$status = 'error';
-		_e( 'API URL is missing.', 'mautic-contacts-count' );
+		_e( 'API URL is missing.', 'contacts-in-mautic' );
 		$cpts_err = true;
 	}
 	if ( $bsfm_secret_key == '' ) {
 		$status = 'error';
-		_e( 'Secret Key is missing.', 'mautic-contacts-count' );
+		_e( 'Secret Key is missing.', 'contacts-in-mautic' );
 		$cpts_err = true;
 	}
 	$settings = array(
@@ -278,8 +278,7 @@ function bsf_get_mautic_data() {
 		$access_details = json_decode( $response['body'] );
 
 		if ( isset( $access_details->error ) ) {
-			echo json_encode( $result );
-			_e( 'Unable to Connect', 'mautic-contacts-count' );
+			_e( 'Unable to Connect', 'contacts-in-mautic' );
 			exit();
 		}
 		$expiration                   = time() + $access_details->expires_in;
