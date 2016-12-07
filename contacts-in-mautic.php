@@ -50,7 +50,7 @@ function bsf_mautic_cnt_scode() {
 	$mautic_count_trans = get_transient( 'bsf_mautic_contact_count' );
 
 	if ( $mautic_count_trans ) {
-		//return $mautic_count_trans;
+		return $mautic_count_trans;
 	}
 
 	$method           = "GET";
@@ -88,12 +88,6 @@ function bsf_mautic_cnt_scode() {
 			$contacts_details = json_decode( $response_body );
 		}
 	}
-
-	echo "<pre>";
-	print_r($contacts_details);
-	echo "</pre>";
-
-die();
 	if ( is_wp_error( $response ) ) {
 		$errorMsg = $response->get_error_message();
 		$status   = 'error';
