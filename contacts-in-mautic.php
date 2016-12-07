@@ -1,13 +1,33 @@
 <?php
 /**
- * Plugin Name:       Conatacts in Mautic
+ * Plugin Name:       Contacts in Mautic
  * Plugin URI:        http://brainstormforce.com
  * Description:       Get All Mautic Contacts Count using simple shortcode.
  * Version:           1.0.0
  * Author:            Brainstormforce
  * Author URI:        http://brainstormforce.com
+ * License: GNU General Public License v2.0
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       contacts-in-mautic
  */
+
+/**
+ * Contacts in Mautic
+ * Copyright (C) 2016, http://brainstormforce.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
@@ -30,7 +50,7 @@ function bsf_mautic_cnt_scode() {
 	$mautic_count_trans = get_transient( 'bsf_mautic_contact_count' );
 
 	if ( $mautic_count_trans ) {
-		return $mautic_count_trans;
+		//return $mautic_count_trans;
 	}
 
 	$method           = "GET";
@@ -69,6 +89,11 @@ function bsf_mautic_cnt_scode() {
 		}
 	}
 
+	echo "<pre>";
+	print_r($contacts_details);
+	echo "</pre>";
+
+die();
 	if ( is_wp_error( $response ) ) {
 		$errorMsg = $response->get_error_message();
 		$status   = 'error';
