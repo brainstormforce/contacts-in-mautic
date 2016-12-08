@@ -1,6 +1,6 @@
 === Contacts in Mautic ===
 Contributors: brainstormforce
-Tags: mautic, contacts, api, count
+Tags: mautic, contacts, api, count, email
 Requires at least: 3.0
 Tested up to: 4.7
 
@@ -11,8 +11,8 @@ A very useful plugin to display your mautic contacts count on your website. This
 
 # Configurations
 
-- You need to basic configurations at WordPress Dashboard -> Settings -> Mautic Contacts Count Page
-- Enter Mautic URL
+- Go to WordPress Dashboard -> Settings -> Mautic Contacts Count Page
+- Enter Mautic Base URL
 - Enter Public Key and Secret Key
 
 # How To Use Shortcode

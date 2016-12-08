@@ -28,6 +28,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
+
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
@@ -35,6 +36,7 @@ if ( ! defined( 'WPINC' ) ) {
 add_action( 'admin_init', 'bsf_mautic_cnt_set_code' );
 add_action( 'admin_menu', 'bsf_mautic_menu' );
 add_action( 'wp_loaded', 'bsf_cnt_authenticate_update' );
+add_action( 'admin_enqueue_scripts', 'bsf_cnt_load_style' );
 add_shortcode( 'mauticcount', 'bsf_mautic_cnt_scode' );
 
 function bsf_mautic_cnt_set_code() {
@@ -45,7 +47,11 @@ function bsf_mautic_cnt_set_code() {
 		bsf_get_mautic_data();
 	}
 }
-
+function bsf_cnt_load_style() {
+	if ( (isset( $_REQUEST['page'] ) && 'mautic-count' == $_REQUEST['page'] ) ) {
+		wp_enqueue_style( 'bsfm-cnt-admin-style', plugins_url( '/', __FILE__ )  . 'assets/css/bsfm-cnt-admin.css' );
+	}	
+}
 function bsf_mautic_cnt_scode() {
 	$mautic_count_trans = get_transient( 'bsf_mautic_contact_count' );
 
@@ -116,7 +122,7 @@ function bsf_mautic_cnt_scode() {
 }
 
 function bsf_mautic_menu() {
-	add_options_page( 'Mautic Contacts Count', 'Mautic Contacts Count', 'manage_options', 'mautic-count', 'bsf_mautic_contact_setting_page' );
+	add_options_page( 'Mautic Contacts Count', __( 'Mautic Contacts Count', 'contacts-in-mautic' ) , 'manage_options', 'mautic-count', 'bsf_mautic_contact_setting_page' );
 }
 
 function bsf_mautic_contact_setting_page() {
@@ -124,10 +130,13 @@ function bsf_mautic_contact_setting_page() {
 		delete_transient( 'bsf_mautic_contact_count' );
 	}
 	?>
-	<h3> Configure Mautic</h3>
-	<form id="mautic-config-form" action="<?php echo admin_url( 'options-general.php?page=mautic-count' ); ?>"
+	<h3><?php _e( 'Configure Mautic', 'contacts-in-mautic' ); ?></h3>
+	<form id="mautic-cnt-config-form" action="<?php echo admin_url( 'options-general.php?page=mautic-count' ); ?>"
 	      method="post">
 		<?php
+		if ( isset( $_POST['bsf-mautic-cnt-nonce'] ) && isset( $_POST['bsfm-cnt-disconnect-mautic'] ) ) {
+			delete_option( '_bsf_mautic_cnt_credentials' );
+		}
 		$bsfm          = get_option( '_bsf_mautic_cnt_config' );
 		$bsfm_base_url = $bsfm_public_key = $bsfm_secret_key = '';
 		if ( is_array( $bsfm ) ) {
@@ -147,15 +156,20 @@ function bsf_mautic_contact_setting_page() {
 			</p>
 		</div>
 		<!-- Client Public Key -->
+	
+		<?php 
+		$credentials = get_option( '_bsf_mautic_cnt_credentials' );
+		if( ! isset( $credentials['access_token'] ) ) { ?>
+
 		<div class="form-setting">
 			<h4><?php _e( 'Public Key', 'contacts-in-mautic' ); ?></h4>
-			<input type="text" class="regular-text" name="bsfm-public-key" value="<?php echo $bsfm_public_key; ?>"
+			<input type="text" class="regular-text" name="bsfm-public-key" value=""
 			       class="contacts-in-mautic-text"/>
 		</div>
 		<!-- Client Secret Key -->
 		<div class="form-setting">
 			<h4><?php _e( 'Secret Key', 'contacts-in-mautic' ); ?></h4>
-			<input type="text" class="regular-text" name="bsfm-secret-key" value="<?php echo $bsfm_secret_key; ?>"
+			<input type="text" class="regular-text" name="bsfm-secret-key" value=""
 			       class="contacts-in-mautic-text"/>
 		</div>
 		<p class="admin-help">
@@ -165,10 +179,20 @@ function bsf_mautic_contact_setting_page() {
 		<p class="submit">
 			<input type="submit" name="bsfm-save-authenticate" class="button-primary"
 			       value="<?php esc_attr_e( 'Save and Authenticate', 'contacts-in-mautic' ); ?>"/>
+			<span class="bsf-mautic-status-disconnect"> <?php _e('Not Connected', 'contacts-in-mautic'); ?> </span>			     
 		</p>
-		<?php wp_nonce_field( 'bsfmauticcnt', 'bsf-mautic-cnt-nonce' ); ?></h4>
+		<?php }
+		// If not authorized 
+		if( isset( $credentials['access_token'] ) ) { ?>
+		<p class="submit">
+			<span class="bsf-mautic-status-connected" style="background-color: #1baf1b;color: #fff;padding: 3px 6px;margin-right: 2em;"> <?php _e('Connected', 'contacts-in-mautic'); ?> </span>
+			<input type="submit" name="bsfm-cnt-disconnect-mautic" class="button" value="<?php esc_attr_e( 'Disconnect Mautic', 'contacts-in-mautic' ); ?>" />
+		</p>
+		<?php }
+		wp_nonce_field( 'bsfmauticcnt', 'bsf-mautic-cnt-nonce' );
+		?>
 	</form>
-	<p class="admin-help"> <?php _e( 'If shortcode is not displaying correct count, Refresh contacts count.', 'contacts-in-mautic' ); ?> </p>
+	<p class="admin-help"> <?php _e( 'If shortcode is not displaying correct count, Refresh Mautic Contacts count.', 'contacts-in-mautic' ); ?> </p>
 	<form id="mautic-config-clearcount" action="<?php echo admin_url( 'options-general.php?page=mautic-count' ); ?>"
 	      method="post">
 		<p class="submit">
@@ -221,7 +245,7 @@ function bsf_mautic_get_access_token( $grant_type ) {
 
 function bsf_cnt_authenticate_update() {
 
-	if ( ! isset( $_POST['bsf-mautic-cnt-nonce'] ) ) {
+	if ( ! isset( $_POST['bsf-mautic-cnt-nonce'] ) || isset( $_POST['bsfm-cnt-disconnect-mautic'] ) ) {
 
 		return;
 	}
