@@ -40,7 +40,8 @@ add_action( 'admin_enqueue_scripts', 'bsf_cnt_load_style' );
 add_shortcode( 'mauticcount', 'bsf_mautic_cnt_scode' );
 
 function bsf_mautic_cnt_set_code() {
-	if ( isset( $_GET['code'] ) ) {
+
+	if ( isset( $_GET['code'] ) && 'mautic-count' == $_REQUEST['page'] ) {
 		$credentials                = get_option( '_bsf_mautic_cnt_credentials' );
 		$credentials['access_code'] = esc_attr( $_GET['code'] );
 		update_option( '_bsf_mautic_cnt_credentials', $credentials );
@@ -69,7 +70,7 @@ function bsf_mautic_cnt_scode() {
 		$grant_type = 'refresh_token';
 		$response   = bsf_mautic_get_access_token( $grant_type );
 
-		if ( ! is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) === 200 ) {
+		if ( is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) !== 200 ) {
 			$errorMsg = $response->get_error_message();
 			$status   = 'error';
 		} else {
@@ -159,6 +160,7 @@ function bsf_mautic_contact_setting_page() {
 	
 		<?php 
 		$credentials = get_option( '_bsf_mautic_cnt_credentials' );
+		$expires_in = $credentials['expires_in'];
 		if( ! isset( $credentials['access_token'] ) ) { ?>
 
 		<div class="form-setting">
