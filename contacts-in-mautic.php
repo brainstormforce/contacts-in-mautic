@@ -48,12 +48,20 @@ function bsf_mautic_cnt_set_code() {
 		bsf_get_mautic_data();
 	}
 }
+
 function bsf_cnt_load_style() {
 	if ( (isset( $_REQUEST['page'] ) && 'mautic-count' == $_REQUEST['page'] ) ) {
 		wp_enqueue_style( 'bsfm-cnt-admin-style', plugins_url( '/', __FILE__ )  . 'assets/css/bsfm-cnt-admin.css' );
 	}	
 }
-function bsf_mautic_cnt_scode() {
+
+function bsf_mautic_cnt_scode(  $bsf_atts ) {
+
+	$atts = shortcode_atts(
+	array(
+		'anonymous' => 1
+	), $bsf_atts, 'mauticcount' );
+
 	$mautic_count_trans = get_transient( 'bsf_mautic_contact_count' );
 
 	if ( $mautic_count_trans ) {
@@ -88,7 +96,13 @@ function bsf_mautic_cnt_scode() {
 	$response     = '';
 
 	if ( ! empty( $access_token ) ) {
-		$url      = $credentials['baseUrl'] . '/api/contacts?access_token=' . $access_token;
+
+		if( $atts['anonymous'] == 0 ) {
+			$url      = $credentials['baseUrl'] . '/api/contacts?search=!is:anonymous&access_token=' . $access_token;
+		}
+		else {
+			$url      = $credentials['baseUrl'] . '/api/contacts?access_token=' . $access_token;
+		}
 		$response = wp_remote_get( $url );
 		if ( ! is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) === 200 ) {
 			$response_body    = $response['body'];
