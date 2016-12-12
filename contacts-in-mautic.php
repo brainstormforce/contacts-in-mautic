@@ -268,7 +268,9 @@ function bsf_cnt_authenticate_update() {
 
 	if ( isset( $_POST['bsf-mautic-cnt-nonce'] ) && wp_verify_nonce( $_POST['bsf-mautic-cnt-nonce'], 'bsfmauticcnt' ) ) {
 		if ( isset( $_POST['bsfm-base-url'] ) ) {
-			$bsfm['bsfm-base-url'] = esc_url( $_POST['bsfm-base-url'] );
+			$mautic_base_url = $_POST['bsfm-base-url'];
+			$mautic_base_url = rtrim( $mautic_base_url ,"/");
+			$bsfm['bsfm-base-url'] = esc_url( $mautic_base_url );
 		}
 		if ( isset( $_POST['bsfm-public-key'] ) ) {
 			$bsfm['bsfm-public-key'] = sanitize_key( $_POST['bsfm-public-key'] );
@@ -292,6 +294,7 @@ function bsf_cnt_authenticate_update() {
 	$mautic_api_url  = isset( $post['bsfm-base-url'] ) ? esc_attr( $post['bsfm-base-url'] ) : '';
 	$bsfm_public_key = isset( $post['bsfm-public-key'] ) ? esc_attr( $post['bsfm-public-key'] ) : '';
 	$bsfm_secret_key = isset( $post['bsfm-secret-key'] ) ? esc_attr( $post['bsfm-secret-key'] ) : '';
+	$mautic_api_url = rtrim( $mautic_api_url ,"/");
 	if ( $mautic_api_url == '' ) {
 		$status = 'error';
 		_e( 'API URL is missing.', 'contacts-in-mautic' );
