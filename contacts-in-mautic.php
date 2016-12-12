@@ -136,7 +136,7 @@ function bsf_mautic_cnt_scode( $bsf_atts ) {
 }
 
 function bsf_mautic_menu() {
-	add_options_page( 'Mautic Contacts Count', __( 'Mautic Contacts Count', 'contacts-in-mautic' ) , 'manage_options', 'mautic-count', 'bsf_mautic_contact_setting_page' );
+	add_options_page( 'Contacts in Mautic', __( 'Contacts in Mautic', 'contacts-in-mautic' ) , 'manage_options', 'mautic-count', 'bsf_mautic_contact_setting_page' );
 }
 
 function bsf_mautic_contact_setting_page() {
