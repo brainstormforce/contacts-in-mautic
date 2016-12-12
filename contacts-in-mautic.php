@@ -55,11 +55,11 @@ function bsf_cnt_load_style() {
 	}	
 }
 
-function bsf_mautic_cnt_scode(  $bsf_atts ) {
+function bsf_mautic_cnt_scode( $bsf_atts ) {
 
 	$atts = shortcode_atts(
 	array(
-		'anonymous' => 1
+		'anonymous' => 'off'
 	), $bsf_atts, 'mauticcount' );
 
 	$mautic_count_trans = get_transient( 'bsf_mautic_contact_count' );
@@ -97,11 +97,11 @@ function bsf_mautic_cnt_scode(  $bsf_atts ) {
 
 	if ( ! empty( $access_token ) ) {
 
-		if( $atts['anonymous'] == 0 ) {
-			$url      = $credentials['baseUrl'] . '/api/contacts?search=!is:anonymous&access_token=' . $access_token;
+		if( $atts['anonymous'] == 'on' ) {
+			$url      = $credentials['baseUrl'] . '/api/contacts?access_token=' . $access_token;
 		}
 		else {
-			$url      = $credentials['baseUrl'] . '/api/contacts?access_token=' . $access_token;
+			$url      = $credentials['baseUrl'] . '/api/contacts?search=!is:anonymous&access_token=' . $access_token;
 		}
 		$response = wp_remote_get( $url );
 		if ( ! is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) === 200 ) {
@@ -128,7 +128,6 @@ function bsf_mautic_cnt_scode(  $bsf_atts ) {
 
 	if ( isset( $contacts_details->total ) ) {
 		set_transient( 'bsf_mautic_contact_count', $contacts_details->total, DAY_IN_SECONDS );
-
 		return $contacts_details->total;
 	} else {
 

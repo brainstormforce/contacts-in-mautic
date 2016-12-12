@@ -7,7 +7,7 @@ Tested up to: 4.7
 Display your Mautic Contacts count on your website
 
 == Description ==
-A very useful plugin to display your mautic contacts count on your website. This plugin generate the shortcode [mauticcount]. Use this shortocde in your website & share your happy :) customer count with visitors.  If you want to exclude anonymous contacts from count use shortcode `[mauticcount anonymous="0"]`.
+A very useful plugin to display your mautic contacts count on your website. This plugin generate the shortcode [mauticcount]. Use this shortocde in your website & share your happy :) customer count with visitors.  If you want to include anonymous contacts in count use shortcode `[mauticcount anonymous="on"]`.
 
 # Configurations
 
@@ -17,13 +17,13 @@ A very useful plugin to display your mautic contacts count on your website. This
 
 # How To Use Shortcode
 
-* To display all contacts use following shorcode
+* To display Mautic contacts count use following shorcode
 
 `[mauticcount]`
 
-* To display all contacts excluding anonymous contacts
+* To display all contacts including anonymous contacts
 
-`[mauticcount anonymous="0"]`
+`[mauticcount anonymous="on"]`
 
 == Installation ==
 # How To Get Mautic API Credentials 
