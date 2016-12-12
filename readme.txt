@@ -28,4 +28,4 @@ A very useful plugin to display your mautic contacts count on your website. This
 == Installation ==
 # How To Get Mautic API Credentials 
 
-Need help to get Mautic API credentials? Refer [this doc](http://docs.sharkz.in/how-to-get-mautic-api-credentials/) to know How to get mautic credentials.
+Need help to get Mautic API credentials? Refer [this doc](https://docs.brainstormforce.com/how-to-get-mautic-api-credentials/) to know How to get mautic credentials.

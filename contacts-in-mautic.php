@@ -189,7 +189,7 @@ function bsf_mautic_contact_setting_page() {
 			       class="contacts-in-mautic-text"/>
 		</div>
 		<p class="admin-help">
-			<?php _e( 'Need help to get Mautic API credentials? Read <a target="_blank" href="http://docs.sharkz.in/how-to-get-mautic-api-credentials/">this article</a> for more information.', 'contacts-in-mautic' ); ?>
+			<?php _e( 'Need help to get Mautic API credentials? Read <a target="_blank" href="https://docs.brainstormforce.com/how-to-get-mautic-api-credentials/">this article</a> for more information.', 'contacts-in-mautic' ); ?>
 		</p>
 
 		<p class="submit">
