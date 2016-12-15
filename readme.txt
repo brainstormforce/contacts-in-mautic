@@ -1,5 +1,5 @@
 === Contacts in Mautic ===
-Contributors: brainstormforce
+Contributors: brainstormforce, rahulwalunje-1
 Tags: mautic, contacts, api, count, email
 Requires at least: 4.1
 Stable tag: 1.0.0
