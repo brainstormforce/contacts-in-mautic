@@ -3,7 +3,7 @@ Contributors: brainstormforce, rahulwalunje-1
 Tags: mautic, contacts, api, count, email
 Requires at least: 4.1
 Stable tag: 1.0.0
-Tested up to: 4.7
+Tested up to: 4.8.1
 
 Display your Mautic Contacts count on your website
 
