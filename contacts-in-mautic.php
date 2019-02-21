@@ -173,7 +173,7 @@ function bsf_mautic_contact_setting_page() {
 	
 		<?php 
 		$credentials = get_option( '_bsf_mautic_cnt_credentials' );
-		$expires_in = $credentials['expires_in'];
+		$expires_in = isset( $credentials['expires_in'] ) ? $credentials['expires_in'] : '';
 		if( ! isset( $credentials['access_token'] ) ) { ?>
 
 		<div class="form-setting">
