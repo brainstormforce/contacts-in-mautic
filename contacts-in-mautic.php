@@ -127,7 +127,7 @@ function bsf_mautic_cnt_scode( $bsf_atts ) {
 	}
 
 	if ( isset( $contacts_details->total ) ) {
-		set_transient( 'bsf_mautic_contact_count', $contacts_details->total, DAY_IN_SECONDS );
+		set_transient( 'bsf_mautic_contact_count', $contacts_details->total, WEEK_IN_SECONDS );
 		return number_format( $contacts_details->total );
 	} else {
 
