@@ -65,7 +65,7 @@ function bsf_mautic_cnt_scode( $bsf_atts ) {
 	$mautic_count_trans = get_transient( 'bsf_mautic_contact_count' );
 
 	if ( $mautic_count_trans ) {
-		return $mautic_count_trans;
+		return number_format( $mautic_count_trans );
 	}
 
 	$method           = "GET";
@@ -128,7 +128,7 @@ function bsf_mautic_cnt_scode( $bsf_atts ) {
 
 	if ( isset( $contacts_details->total ) ) {
 		set_transient( 'bsf_mautic_contact_count', $contacts_details->total, DAY_IN_SECONDS );
-		return $contacts_details->total;
+		return number_format( $contacts_details->total );
 	} else {
 
 		return _e( 'Something is wrong with mautic authentication. Please authenticate Mautic.', 'contacts-in-mautic' );
