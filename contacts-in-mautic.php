@@ -3,7 +3,7 @@
  * Plugin Name:       Contacts in Mautic
  * Plugin URI:        http://brainstormforce.com
  * Description:       Get All Mautic Contacts Count using simple shortcode.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            Brainstormforce
  * Author URI:        http://brainstormforce.com
  * License: GNU General Public License v2.0
