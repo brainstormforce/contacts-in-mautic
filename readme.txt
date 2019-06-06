@@ -32,6 +32,9 @@ A very useful plugin to display your mautic contacts count on your website. This
 - Improvement: Change the Cron to update contacts count to be executed every week rather than every day, making fewer requests to Mautic
 - Fix: Add correct comma separate formatting for the contacts count.
 
+# Version 1.0.0
+- Initial Release.
+
 == Installation ==
 # How To Get Mautic API Credentials 
 
