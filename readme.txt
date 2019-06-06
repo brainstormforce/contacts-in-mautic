@@ -2,8 +2,8 @@
 Contributors: brainstormforce
 Tags: mautic, contacts, api, count, email
 Requires at least: 4.1
-Stable tag: 1.0.0
-Tested up to: 5.1
+Stable tag: 1.0.1
+Tested up to: 5.2
 
 Display your Mautic Contacts count on your website
 
@@ -25,6 +25,15 @@ A very useful plugin to display your mautic contacts count on your website. This
 * To display all contacts including anonymous contacts
 
 `[mauticcount anonymous="on"]`
+
+== Changelog ==
+
+# Version 1.0.1
+- Improvement: Change the Cron to update contacts count to be executed every week rather than every day, making fewer requests to Mautic
+- Fix: Add correct comma separate formatting for the contacts count.
+
+# Version 1.0.0
+- Initial Release.
 
 == Installation ==
 # How To Get Mautic API Credentials 

@@ -3,7 +3,7 @@
  * Plugin Name:       Contacts in Mautic
  * Plugin URI:        http://brainstormforce.com
  * Description:       Get All Mautic Contacts Count using simple shortcode.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            Brainstormforce
  * Author URI:        http://brainstormforce.com
  * License: GNU General Public License v2.0
@@ -65,7 +65,7 @@ function bsf_mautic_cnt_scode( $bsf_atts ) {
 	$mautic_count_trans = get_transient( 'bsf_mautic_contact_count' );
 
 	if ( $mautic_count_trans ) {
-		return $mautic_count_trans;
+		return number_format( $mautic_count_trans );
 	}
 
 	$method           = "GET";
@@ -127,8 +127,8 @@ function bsf_mautic_cnt_scode( $bsf_atts ) {
 	}
 
 	if ( isset( $contacts_details->total ) ) {
-		set_transient( 'bsf_mautic_contact_count', $contacts_details->total, DAY_IN_SECONDS );
-		return $contacts_details->total;
+		set_transient( 'bsf_mautic_contact_count', $contacts_details->total, WEEK_IN_SECONDS );
+		return number_format( $contacts_details->total );
 	} else {
 
 		return _e( 'Something is wrong with mautic authentication. Please authenticate Mautic.', 'contacts-in-mautic' );
