@@ -3,7 +3,7 @@
  * Plugin Name:       Contacts in Mautic
  * Plugin URI:        http://brainstormforce.com
  * Description:       Get All Mautic Contacts Count using simple shortcode.
- * Version:           1.0.1
+ * Version:           1.0.2
  * Author:            Brainstormforce
  * Author URI:        http://brainstormforce.com
  * License: GNU General Public License v2.0
@@ -78,11 +78,8 @@ function bsf_mautic_cnt_scode( $bsf_atts ) {
 		$grant_type = 'refresh_token';
 		$response   = bsf_mautic_get_access_token( $grant_type );
 
-		if ( is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) !== 200 ) {
-			$errorMsg = $response->get_error_message();
-			$status   = 'error';
-		} else {
-			$access_details               = json_decode( $response['body'] );
+		if ( ! is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) === 200 ) {
+			$access_details               = wp_remote_retrieve_body( $response );
 			$expiration                   = time() + $access_details->expires_in;
 			$credentials['access_token']  = $access_details->access_token;
 			$credentials['expires_in']    = $expiration;
@@ -109,28 +106,11 @@ function bsf_mautic_cnt_scode( $bsf_atts ) {
 			$contacts_details = json_decode( $response_body );
 		}
 	}
-	if ( is_wp_error( $response ) ) {
-		$errorMsg = $response->get_error_message();
-		$status   = 'error';
-	} else {
-		if ( is_array( $response ) ) {
-			$response_code = $response['response']['code'];
-			if ( $response_code != 201 ) {
-				if ( $response_code != 200 ) {
-					$ret      = false;
-					$status   = 'error';
-					$errorMsg = isset( $response['response']['message'] ) ? $response['response']['message'] : '';
-					echo $errorMsg;
-				}
-			}
-		}
-	}
 
 	if ( isset( $contacts_details->total ) ) {
 		set_transient( 'bsf_mautic_contact_count', $contacts_details->total, WEEK_IN_SECONDS );
 		return number_format( $contacts_details->total );
 	} else {
-
 		return _e( 'Something is wrong with mautic authentication. Please authenticate Mautic.', 'contacts-in-mautic' );
 	}
 }
