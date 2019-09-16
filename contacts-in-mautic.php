@@ -91,7 +91,13 @@ function bsf_mautic_cnt_scode( $bsf_atts ) {
 	if ( 'mautic_user_pass' == $get_mautic_connect_type ) {
 
 		$credentials  = get_option( '_bsf_mautic_cnt_user_pass_credentials' );
-		$response = bsfm_connect_mautic_username_password( $credentials );
+		if( $atts['anonymous'] == 'on' ) {
+			$response = bsfm_connect_mautic_username_password( $credentials , 'on' );
+		}
+		else {
+			$response = bsfm_connect_mautic_username_password( $credentials , 'off' );
+		}
+
 		$response_body    = $response['body'];
 		$contacts_details = $response_body;
 
@@ -363,7 +369,7 @@ function bsf_cnt_authenticate_update() {
 				$bsfm['bsfm-password'] = $_POST['bsfm-password'];
 			}
 
-			$connect = bsfm_connect_mautic_username_password( $bsfm );
+			$connect = bsfm_connect_mautic_username_password( $bsfm, 'off' );
 
 			if ( '' != $connect['error'] || !empty( $connect['error'] ) ) {
 				update_option( 'mautic_user_pass_error_msg', $connect['error'] );
@@ -466,7 +472,7 @@ function bsf_get_mautic_data() {
      * @return array
      * @since 1.0.3
      */
-	function bsfm_connect_mautic_username_password( $data ) {
+	function bsfm_connect_mautic_username_password( $data , $anonymous ) {
 
 		$mautic_response = array( 'error' => '', 'body' => '' );
 
@@ -484,7 +490,11 @@ function bsf_get_mautic_data() {
 			)
 		);
 
-		$request  = $mautic_base_url.'/api/contacts';
+		if ( $anonymous == 'on' ) {
+			$request  = $mautic_base_url.'/api/contacts';
+		} else {
+			$request  = $mautic_base_url.'/api/contacts?search=!is:anonymous';
+		}
 		$response = wp_remote_get( $request, $params );
 
 		if( is_wp_error( $response ) ) {
