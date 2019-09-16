@@ -19,30 +19,12 @@ if ( ! class_exists( 'Bsf_CM_Auto_Update' ) ) :
 
 
 		/**
-		 * Class instance.
-		 *
-		 * @access private
-		 * @var $instance Class instance.
-		 */
-		private static $instance;
-
-		/**
-		 * Initiator
-		 */
-		public static function get_instance() {
-			if ( ! isset( self::$instance ) ) {
-				self::$instance = new self();
-			}
-			return self::$instance;
-		}
-
-		/**
 		 * Constructor
 		 */
 		public function __construct() {
 
 			// Plugin Updates.
-			add_action( 'init', __CLASS__ . '::init' );
+			add_action( 'admin_init', __CLASS__ . '::init' );
 		}
 
 		/**
@@ -76,6 +58,6 @@ if ( ! class_exists( 'Bsf_CM_Auto_Update' ) ) :
 endif;
 
 /**
- * calling 'get_instance()' method
+ * calling 'Bsf_CM_Auto_Update' Constructor
  */
-Bsf_CM_Auto_Update::get_instance();
+new Bsf_CM_Auto_Update();

@@ -34,7 +34,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 // Set the BSF_CONTACT_MAUTIC_VERSION.
-define('BSF_CONTACT_MAUTIC_VERSION', '1.0.3');
+define('BSF_CONTACT_MAUTIC_VERSION', '1.0.2');
 
 // Include the auto update file.
 require_once plugin_dir_path( __FILE__ ) .'classes/class-bsf-cm-auto-update.php';
@@ -88,10 +88,10 @@ function bsf_mautic_cnt_scode( $bsf_atts ) {
 
 	// Get Connection type and check.
 
-	if ( 'mautic_user_pass' == $get_mautic_connect_type ) {
+	if ( 'mautic_user_pass' === $get_mautic_connect_type ) {
 
 		$credentials  = get_option( '_bsf_mautic_cnt_user_pass_credentials' );
-		if( $atts['anonymous'] == 'on' ) {
+		if( 'on' === $atts['anonymous'] ) {
 			$response = bsfm_connect_mautic_username_password( $credentials , 'on' );
 		}
 		else {
@@ -124,7 +124,7 @@ function bsf_mautic_cnt_scode( $bsf_atts ) {
 
 		if ( ! empty( $access_token ) ) {
 
-			if( $atts['anonymous'] == 'on' ) {
+			if( 'on' === $atts['anonymous'] ) {
 				$url      = $credentials['baseUrl'] . '/api/contacts?access_token=' . $access_token;
 			}
 			else {
@@ -171,7 +171,7 @@ function bsf_mautic_contact_setting_page() {
 
 		// Get Connection type and check.
 
-		if ( 'mautic_api' == $get_mautic_connect_type ) {
+		if ( 'mautic_api' === $get_mautic_connect_type ) {
 
 			$bsfm          = get_option( '_bsf_mautic_cnt_config' );
 			$bsfm_base_url = $bsfm_public_key = $bsfm_secret_key = '';
@@ -209,7 +209,7 @@ function bsf_mautic_contact_setting_page() {
 		<?php
 		$mautic_user_pass_error_msg = get_option( 'mautic_user_pass_error_msg');
 
-		if ( false != $mautic_user_pass_error_msg || !empty( $mautic_user_pass_error_msg ) ) {
+		if ( false !== $mautic_user_pass_error_msg || !empty( $mautic_user_pass_error_msg ) ) {
 			delete_option( '_bsf_mautic_cnt_user_pass_credentials' );
 		?>
 		<!-- Mautic Username and Password error message -->
@@ -254,7 +254,7 @@ function bsf_mautic_contact_setting_page() {
 
 		<?php
 
-		if ( 'mautic_api' == $get_mautic_connect_type || false != $mautic_user_pass_error_msg || !empty( $mautic_user_pass_error_msg ) ) {
+		if ( 'mautic_api' === $get_mautic_connect_type || false !== $mautic_user_pass_error_msg || !empty( $mautic_user_pass_error_msg ) ) {
 
 			$credentials = get_option( '_bsf_mautic_cnt_credentials' );
 			$expires_in = isset( $credentials['expires_in'] ) ? $credentials['expires_in'] : '';
@@ -360,7 +360,7 @@ function bsf_cnt_authenticate_update() {
 			$bsfm['bsfm-base-url'] = esc_url( $mautic_base_url );
 		}
 
-		if( isset( $_POST['bsfm_mautic_type'] ) && ( 'mautic_user_pass' == $_POST['bsfm_mautic_type'] ) ) {
+		if( isset( $_POST['bsfm_mautic_type'] ) && ( 'mautic_user_pass' === $_POST['bsfm_mautic_type'] ) ) {
 
 			if ( isset( $_POST['bsfm-username'] ) ) {
 				$bsfm['bsfm-username'] = sanitize_key( $_POST['bsfm-username'] );
@@ -371,7 +371,7 @@ function bsf_cnt_authenticate_update() {
 
 			$connect = bsfm_connect_mautic_username_password( $bsfm, 'off' );
 
-			if ( '' != $connect['error'] || !empty( $connect['error'] ) ) {
+			if ( '' !== $connect['error'] || !empty( $connect['error'] ) ) {
 				update_option( 'mautic_user_pass_error_msg', $connect['error'] );
 			} else {
 				update_option( 'mautic_user_pass_error_msg', $connect['error'] );
@@ -490,7 +490,7 @@ function bsf_get_mautic_data() {
 			)
 		);
 
-		if ( $anonymous == 'on' ) {
+		if ( 'on' === $anonymous ) {
 			$request  = $mautic_base_url.'/api/contacts';
 		} else {
 			$request  = $mautic_base_url.'/api/contacts?search=!is:anonymous';
