@@ -103,7 +103,7 @@ function bsf_mautic_cnt_scode( $bsf_atts ) {
 
 	} else {
 		$credentials      = get_option( '_bsf_mautic_cnt_credentials' );
-			// if token expired, get new access token
+		// if token expired, get new access token
 		if ( isset( $credentials['expires_in'] ) && $credentials['expires_in'] < time() ) {
 			$grant_type = 'refresh_token';
 			$response   = bsf_mautic_get_access_token( $grant_type );
@@ -125,10 +125,9 @@ function bsf_mautic_cnt_scode( $bsf_atts ) {
 		if ( ! empty( $access_token ) ) {
 
 			if( 'on' === $atts['anonymous'] ) {
-				$url      = $credentials['baseUrl'] . '/api/contacts?access_token=' . $access_token;
-			}
-			else {
-				$url      = $credentials['baseUrl'] . '/api/contacts?search=!is:anonymous&access_token=' . $access_token;
+				$url = $credentials['baseUrl'] . '/api/contacts?access_token=' . $access_token;
+			} else {
+				$url = $credentials['baseUrl'] . '/api/contacts?search=!is:anonymous&access_token=' . $access_token;
 			}
 			$response = wp_remote_get( $url );
 			if ( ! is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) === 200 ) {
@@ -136,7 +135,6 @@ function bsf_mautic_cnt_scode( $bsf_atts ) {
 				$contacts_details = json_decode( $response_body );
 			}
 		}
-
 	}
 
 	if ( isset( $contacts_details->total ) ) {
@@ -180,18 +178,17 @@ function bsf_mautic_contact_setting_page() {
 				$bsfm_public_key = ( array_key_exists( 'bsfm-public-key', $bsfm ) ) ? $bsfm['bsfm-public-key'] : '';
 				$bsfm_secret_key = ( array_key_exists( 'bsfm-secret-key', $bsfm ) ) ? $bsfm['bsfm-secret-key'] : '';
 			}
-		}else{
+		} else {
 
 			$bsfm          = get_option( '_bsf_mautic_cnt_user_pass_credentials' );
 			$bsfm_base_url = $bsfm_username = $bsfm_password = '';
 			if ( is_array( $bsfm ) ) {
-				$bsfm_base_url   = ( array_key_exists( 'bsfm-base-url', $bsfm ) ) ? $bsfm['bsfm-base-url'] : '';
-				$bsfm_username   = ( array_key_exists( 'bsfm-username', $bsfm ) ) ? $bsfm['bsfm-username'] : '';
-				$bsfm_password   = ( array_key_exists( 'bsfm-password', $bsfm ) ) ? $bsfm['bsfm-password'] : '';
+				$bsfm_base_url = ( array_key_exists( 'bsfm-base-url', $bsfm ) ) ? $bsfm['bsfm-base-url'] : '';
+				$bsfm_username = ( array_key_exists( 'bsfm-username', $bsfm ) ) ? $bsfm['bsfm-username'] : '';
+				$bsfm_password = ( array_key_exists( 'bsfm-password', $bsfm ) ) ? $bsfm['bsfm-password'] : '';
 			}
 		}
 		?>
-
 
 		<!-- Base Url -->
 		<div class="form-setting">
@@ -311,7 +308,6 @@ function bsf_mautic_get_access_token( $grant_type ) {
 	$credentials = get_option( '_bsf_mautic_cnt_credentials' );
 
 	if ( ! isset( $credentials['baseUrl'] ) ) {
-
 		return;
 	}
 
@@ -349,7 +345,6 @@ function bsf_mautic_get_access_token( $grant_type ) {
 function bsf_cnt_authenticate_update() {
 
 	if ( ! isset( $_POST['bsf-mautic-cnt-nonce'] ) || isset( $_POST['bsfm-cnt-disconnect-mautic'] ) ) {
-
 		return;
 	}
 
@@ -388,7 +383,7 @@ function bsf_cnt_authenticate_update() {
 			if ( isset( $_POST['bsfm-secret-key'] ) ) {
 				$bsfm['bsfm-secret-key'] = sanitize_key( $_POST['bsfm-secret-key'] );
 			}
-		// Update the site-wide option since we're in the network admin.
+			// Update the site-wide option since we're in the network admin.
 			if ( is_network_admin() ) {
 				update_site_option( '_bsf_mautic_cnt_config', $bsfm );
 			} else {
@@ -402,7 +397,7 @@ function bsf_cnt_authenticate_update() {
 			$mautic_api_url  = isset( $post['bsfm-base-url'] ) ? esc_attr( $post['bsfm-base-url'] ) : '';
 			$bsfm_public_key = isset( $post['bsfm-public-key'] ) ? esc_attr( $post['bsfm-public-key'] ) : '';
 			$bsfm_secret_key = isset( $post['bsfm-secret-key'] ) ? esc_attr( $post['bsfm-secret-key'] ) : '';
-			$mautic_api_url = rtrim( $mautic_api_url ,"/");
+			$mautic_api_url  = rtrim( $mautic_api_url ,"/");
 			if ( $mautic_api_url == '' ) {
 				$status = 'error';
 				_e( 'API URL is missing.', 'contacts-in-mautic' );
@@ -426,7 +421,7 @@ function bsf_cnt_authenticate_update() {
 			update_option( 'bsf_mautic_connection_type', 'mautic_api' );
 
 			$authurl = $settings['baseUrl'] . '/oauth/v2/authorize';
-	//OAuth 2.0
+			//OAuth 2.0
 			$authurl .= '?client_id=' . $settings['clientKey'] . '&redirect_uri=' . urlencode( $settings['callback'] );
 			$state = md5( time() . mt_rand() );
 			$authurl .= '&state=' . $state;
@@ -465,67 +460,67 @@ function bsf_get_mautic_data() {
 	}
 }
 
-    /**
-     * Connect BSF Mautic with Username and Password
-     *
-     * @param array $data form data
-     * @return array
-     * @since 1.0.3
-     */
-	function bsfm_connect_mautic_username_password( $data , $anonymous ) {
+/**
+ * Connect BSF Mautic with Username and Password
+ *
+ * @param array $data form data
+ * @return array
+ * @since 1.0.3
+ */
+function bsfm_connect_mautic_username_password( $data , $anonymous ) {
 
-		$mautic_response = array( 'error' => '', 'body' => '' );
+	$mautic_response = array( 'error' => '', 'body' => '' );
 
-		$mautic_base_url = $data['bsfm-base-url'];
-		$mautic_username = $data['bsfm-username'];
-		$mautic_password = wp_unslash( $data['bsfm-password'] );
+	$mautic_base_url = $data['bsfm-base-url'];
+	$mautic_username = $data['bsfm-username'];
+	$mautic_password = wp_unslash( $data['bsfm-password'] );
 
-		$auth_key = base64_encode($mautic_username . ':' . $mautic_password);
+	$auth_key = base64_encode($mautic_username . ':' . $mautic_password);
 
-		$params = array(
-			'timeout'     => 30,
-			'httpversion' => '1.1',
-			'headers'     => array(
-				'Authorization' => 'Basic ' . $auth_key
-			)
-		);
+	$params = array(
+		'timeout'     => 30,
+		'httpversion' => '1.1',
+		'headers'     => array(
+			'Authorization' => 'Basic ' . $auth_key
+		)
+	);
 
-		if ( 'on' === $anonymous ) {
-			$request  = $mautic_base_url.'/api/contacts';
-		} else {
-			$request  = $mautic_base_url.'/api/contacts?search=!is:anonymous';
-		}
-		$response = wp_remote_get( $request, $params );
+	if ( 'on' === $anonymous ) {
+		$request  = $mautic_base_url.'/api/contacts';
+	} else {
+		$request  = $mautic_base_url.'/api/contacts?search=!is:anonymous';
+	}
+	$response = wp_remote_get( $request, $params );
 
-		if( is_wp_error( $response ) ) {
-			$mautic_response['error'] = __( 'There appears to be an error with the configuration.', 'convertpro-addon' );
-			return $mautic_response;
-		}
-
-		$body = json_decode( wp_remote_retrieve_body( $response ) );
-
-		if( isset( $body->errors ) ) {
-
-			if( $body->errors[0]->code == 404 ) {
-				/* translators: %s Error Message */
-				$mautic_response['error'] = sprintf( __( '404 error. This sometimes happens when you\'ve just enabled the API, and your cache needs to be rebuilt. See <a href="https://mautic.org/docs/en/tips/troubleshooting.html" target="_blank">here for more info</a> - %s', 'convertpro-addon' ), $body->errors[0]->message );
-
-				return $mautic_response;
-
-			} elseif( $body->errors[0]->code == 403 ) {
-				/* translators: %s Error Message */
-				$mautic_response['error'] = sprintf( __( '403 error. You need to enable the API from within Mautic\'s configuration settings to connect. - %s', 'convertpro-addon' ), $body->errors[0]->message );
-
-				return $mautic_response;
-
-			} else {
-				/* translators: %s Error Message */
-				$mautic_response['error'] = sprintf( __( '%s - %s', 'convertpro-addon' ), $body->errors[0]->code, $body->errors[0]->message );
-
-				return $mautic_response;
-			}
-		}
-		$mautic_response['body'] = $body;
-
+	if( is_wp_error( $response ) ) {
+		$mautic_response['error'] = __( 'There appears to be an error with the configuration.', 'convertpro-addon' );
 		return $mautic_response;
 	}
+
+	$body = json_decode( wp_remote_retrieve_body( $response ) );
+
+	if( isset( $body->errors ) ) {
+
+		if( $body->errors[0]->code == 404 ) {
+			/* translators: %s Error Message */
+			$mautic_response['error'] = sprintf( __( '404 error. This sometimes happens when you\'ve just enabled the API, and your cache needs to be rebuilt. See <a href="https://mautic.org/docs/en/tips/troubleshooting.html" target="_blank">here for more info</a> - %s', 'convertpro-addon' ), $body->errors[0]->message );
+
+			return $mautic_response;
+
+		} elseif( $body->errors[0]->code == 403 ) {
+			/* translators: %s Error Message */
+			$mautic_response['error'] = sprintf( __( '403 error. You need to enable the API from within Mautic\'s configuration settings to connect. - %s', 'convertpro-addon' ), $body->errors[0]->message );
+
+			return $mautic_response;
+
+		} else {
+			/* translators: %s Error Message */
+			$mautic_response['error'] = sprintf( __( '%s - %s', 'convertpro-addon' ), $body->errors[0]->code, $body->errors[0]->message );
+
+			return $mautic_response;
+		}
+	}
+	$mautic_response['body'] = $body;
+
+	return $mautic_response;
+}
