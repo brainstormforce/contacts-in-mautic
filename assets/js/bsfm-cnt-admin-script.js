@@ -6,7 +6,7 @@ var ContactInMautic = {
 		 * Initializes the services logic.
 		 *
 		 * @return void
-		 * @since x.x.x
+		 * @since 1.0.3
 		 */
 		init: function()
 		{	
