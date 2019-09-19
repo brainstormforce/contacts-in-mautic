@@ -39,6 +39,11 @@ class Bsf_CM_Auto_Update {
 			add_option( 'bsf_contact_mautic_version', BSF_CONTACT_MAUTIC_VERSION );
 		}
 
+		// If equals then return.
+		if ( version_compare( $saved_version, BSF_CONTACT_MAUTIC_VERSION, '=' ) ) {
+			return;
+		}
+
 		// Set the Mautic connection type option.
 		$check_option = get_option( 'bsf_mautic_connection_type' );
 		if ( false === $check_option ){
