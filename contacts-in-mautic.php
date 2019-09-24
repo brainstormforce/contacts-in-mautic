@@ -206,7 +206,7 @@ function bsf_mautic_contact_setting_page() {
 		<?php
 		$mautic_user_pass_error_msg = get_option( 'mautic_user_pass_error_msg');
 
-		if ( false !== $mautic_user_pass_error_msg || !empty( $mautic_user_pass_error_msg ) ) {
+		if ( !empty( $mautic_user_pass_error_msg ) ) {
 			delete_option( '_bsf_mautic_cnt_user_pass_credentials' );
 		?>
 		<!-- Mautic Username and Password error message -->
@@ -219,7 +219,7 @@ function bsf_mautic_contact_setting_page() {
 		<?php } ?>
 
 		<?php
-			if( !get_option( '_bsf_mautic_cnt_user_pass_credentials' ) || false != $mautic_user_pass_error_msg || !empty( $mautic_user_pass_error_msg ) ) {
+			if( ( !get_option( '_bsf_mautic_cnt_user_pass_credentials' ) || !empty( $mautic_user_pass_error_msg ) ) && !get_option( '_bsf_mautic_cnt_credentials' ) ) {
 		?>
 
 		<!-- Select the type of connection -->
@@ -251,7 +251,7 @@ function bsf_mautic_contact_setting_page() {
 
 		<?php
 
-		if ( 'mautic_api' === $get_mautic_connect_type || false !== $mautic_user_pass_error_msg || !empty( $mautic_user_pass_error_msg ) ) {
+		if ( 'mautic_api' === $get_mautic_connect_type || !empty( $mautic_user_pass_error_msg ) ) {
 
 			$credentials = get_option( '_bsf_mautic_cnt_credentials' );
 			$expires_in = isset( $credentials['expires_in'] ) ? $credentials['expires_in'] : '';
