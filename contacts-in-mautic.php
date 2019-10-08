@@ -161,7 +161,7 @@ function bsf_mautic_contact_setting_page() {
 		if ( isset( $_POST['bsf-mautic-cnt-nonce'] ) && isset( $_POST['bsfm-cnt-disconnect-mautic'] ) ) {
 			delete_option( '_bsf_mautic_cnt_credentials' );
 			// Delete the credentials and reset the connection type to API.
-			delete_option( '_bsf_mautic_cnt_user_pass_credentials' );
+			update_option( '_bsf_mautic_cnt_user_pass_credentials','' );
 			update_option( 'bsf_mautic_connection_type' , 'mautic_api' );
 		}
 
@@ -204,10 +204,12 @@ function bsf_mautic_contact_setting_page() {
 		<!-- Mautic Username and Password Error Section -->
 
 		<?php
+		$flag = false;
 		$mautic_user_pass_error_msg = get_option( 'mautic_user_pass_error_msg');
 
-		if ( !empty( $mautic_user_pass_error_msg ) ) {
-			delete_option( '_bsf_mautic_cnt_user_pass_credentials' );
+		if ( !empty( $mautic_user_pass_error_msg ) || ''!== $mautic_user_pass_error_msg ) {
+			update_option( '_bsf_mautic_cnt_user_pass_credentials','' );
+			$flag = true;
 		?>
 		<!-- Mautic Username and Password error message -->
 		<div class="warning notice notice-error is-dismissible">
@@ -219,7 +221,18 @@ function bsf_mautic_contact_setting_page() {
 		<?php } ?>
 
 		<?php
-			if( ( !get_option( '_bsf_mautic_cnt_user_pass_credentials' ) || !empty( $mautic_user_pass_error_msg ) ) && !get_option( '_bsf_mautic_cnt_credentials' ) ) {
+		if ( 'mautic_api' === $get_mautic_connect_type && ( !get_option('_bsf_mautic_cnt_credentials') || get_option('_bsf_mautic_cnt_credentials') ) ) {
+			$flag = true;
+			$credentials = get_option( '_bsf_mautic_cnt_credentials' );
+			if ( isset( $credentials['access_token'] ) ){
+				$flag = false;
+			}
+		} elseif ( 'mautic_api' !== $get_mautic_connect_type && ( !empty( $mautic_user_pass_error_msg ) || ''!== $mautic_user_pass_error_msg ) )  {
+			$flag = true;
+		}
+
+			if( $flag ) {
+
 		?>
 
 		<!-- Select the type of connection -->
@@ -419,7 +432,7 @@ function bsf_cnt_authenticate_update() {
 
 			update_option( '_bsf_mautic_cnt_credentials', $settings );
 			update_option( 'bsf_mautic_connection_type', 'mautic_api' );
-
+			update_option( 'mautic_user_pass_error_msg', '' );
 			$authurl = $settings['baseUrl'] . '/oauth/v2/authorize';
 			//OAuth 2.0
 			$authurl .= '?client_id=' . $settings['clientKey'] . '&redirect_uri=' . urlencode( $settings['callback'] );
@@ -493,7 +506,7 @@ function bsfm_connect_mautic_username_password( $data , $anonymous ) {
 	$response = wp_remote_get( $request, $params );
 
 	if( is_wp_error( $response ) ) {
-		$mautic_response['error'] = __( 'There appears to be an error with the configuration.', 'convertpro-addon' );
+		$mautic_response['error'] = __( 'There appears to be an error with the configuration.', 'contacts-in-mautic' );
 		return $mautic_response;
 	}
 
@@ -503,19 +516,19 @@ function bsfm_connect_mautic_username_password( $data , $anonymous ) {
 
 		if( $body->errors[0]->code == 404 ) {
 			/* translators: %s Error Message */
-			$mautic_response['error'] = sprintf( __( '404 error. This sometimes happens when you\'ve just enabled the API, and your cache needs to be rebuilt. See <a href="https://mautic.org/docs/en/tips/troubleshooting.html" target="_blank">here for more info</a> - %s', 'convertpro-addon' ), $body->errors[0]->message );
+			$mautic_response['error'] = sprintf( __( '404 error. This sometimes happens when you\'ve just enabled the API, and your cache needs to be rebuilt. See <a href="https://mautic.org/docs/en/tips/troubleshooting.html" target="_blank">here for more info</a> - %s', 'contacts-in-mautic' ), $body->errors[0]->message );
 
 			return $mautic_response;
 
 		} elseif( $body->errors[0]->code == 403 ) {
 			/* translators: %s Error Message */
-			$mautic_response['error'] = sprintf( __( '403 error. You need to enable the API from within Mautic\'s configuration settings to connect. - %s', 'convertpro-addon' ), $body->errors[0]->message );
+			$mautic_response['error'] = sprintf( __( '403 error. You need to enable the API from within Mautic\'s configuration settings to connect. - %s', 'contacts-in-mautic' ), $body->errors[0]->message );
 
 			return $mautic_response;
 
 		} else {
 			/* translators: %s Error Message */
-			$mautic_response['error'] = sprintf( __( '%s - %s', 'convertpro-addon' ), $body->errors[0]->code, $body->errors[0]->message );
+			$mautic_response['error'] = sprintf( __( '%s - %s', 'contacts-in-mautic' ), $body->errors[0]->code, $body->errors[0]->message );
 
 			return $mautic_response;
 		}

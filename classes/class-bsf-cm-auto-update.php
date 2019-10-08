@@ -50,6 +50,23 @@ class Bsf_CM_Auto_Update {
 			add_option( 'bsf_mautic_connection_type', 'mautic_api' );
 		}
 
+		// create options for Mautic username password and mautic connection error message.
+		if ( version_compare( $saved_version, BSF_CONTACT_MAUTIC_VERSION, '<' ) ) {
+
+			// Set the Mautic username password credentials option.
+			$mautic_up_credentials_option = get_option( '_bsf_mautic_cnt_user_pass_credentials' );
+			if ( false === $mautic_up_credentials_option ){
+				add_option( '_bsf_mautic_cnt_user_pass_credentials', '' );
+			}
+
+			// Set the Mautic connection error message option.
+			$mautic_user_pass_error_msg = get_option( 'mautic_user_pass_error_msg' );
+			if ( false === $mautic_user_pass_error_msg ){
+				add_option( 'mautic_user_pass_error_msg', '' );
+			}
+
+		}
+
 		// Update auto saved version number.
 		update_option( 'bsf_contact_mautic_version', BSF_CONTACT_MAUTIC_VERSION );
 	}
