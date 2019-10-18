@@ -33,6 +33,7 @@
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
+
 // Set the BSF_CONTACT_MAUTIC_VERSION.
 define('BSF_CONTACT_MAUTIC_VERSION', '1.0.3');
 
@@ -90,11 +91,10 @@ function bsf_mautic_cnt_scode( $bsf_atts ) {
 
 	if ( 'mautic_user_pass' === $get_mautic_connect_type ) {
 
-		$credentials  = get_option( '_bsf_mautic_cnt_user_pass_credentials' );
+		$credentials  = get_option( '_bsf_mautic_cnt_credentials' );
 		if( 'on' === $atts['anonymous'] ) {
 			$response = bsfm_connect_mautic_username_password( $credentials , 'on' );
-		}
-		else {
+		} else {
 			$response = bsfm_connect_mautic_username_password( $credentials , 'off' );
 		}
 
@@ -141,7 +141,14 @@ function bsf_mautic_cnt_scode( $bsf_atts ) {
 		set_transient( 'bsf_mautic_contact_count', $contacts_details->total, WEEK_IN_SECONDS );
 		return number_format( $contacts_details->total );
 	} else {
-		return _e( 'Something is wrong with mautic authentication. Please authenticate Mautic.', 'contacts-in-mautic' );
+		$user = wp_get_current_user();
+
+		if ( in_array( 'administrator', (array) $user->roles ) ) {
+			return _e( 'Something is wrong with mautic authentication. Please authenticate Mautic.', 'contacts-in-mautic' );
+        } else {
+			$previous_count = get_option( '_bsf_mautic_cnt_config' );
+			return number_format( $previous_count['total_count'] );
+        }
 	}
 }
 
@@ -160,8 +167,6 @@ function bsf_mautic_contact_setting_page() {
 		<?php
 		if ( isset( $_POST['bsf-mautic-cnt-nonce'] ) && isset( $_POST['bsfm-cnt-disconnect-mautic'] ) ) {
 			delete_option( '_bsf_mautic_cnt_credentials' );
-			// Delete the credentials and reset the connection type to API.
-			update_option( '_bsf_mautic_cnt_user_pass_credentials','' );
 			update_option( 'bsf_mautic_connection_type' , 'mautic_api' );
 		}
 
@@ -180,7 +185,7 @@ function bsf_mautic_contact_setting_page() {
 			}
 		} else {
 
-			$bsfm          = get_option( '_bsf_mautic_cnt_user_pass_credentials' );
+			$bsfm          = get_option( '_bsf_mautic_cnt_credentials' );
 			$bsfm_base_url = $bsfm_username = $bsfm_password = '';
 			if ( is_array( $bsfm ) ) {
 				$bsfm_base_url = ( array_key_exists( 'bsfm-base-url', $bsfm ) ) ? $bsfm['bsfm-base-url'] : '';
@@ -208,7 +213,6 @@ function bsf_mautic_contact_setting_page() {
 		$mautic_user_pass_error_msg = get_option( 'mautic_user_pass_error_msg');
 
 		if ( !empty( $mautic_user_pass_error_msg ) || ''!== $mautic_user_pass_error_msg ) {
-			update_option( '_bsf_mautic_cnt_user_pass_credentials','' );
 			$flag = true;
 		?>
 		<!-- Mautic Username and Password error message -->
@@ -224,10 +228,10 @@ function bsf_mautic_contact_setting_page() {
 		if ( 'mautic_api' === $get_mautic_connect_type && ( !get_option('_bsf_mautic_cnt_credentials') || get_option('_bsf_mautic_cnt_credentials') ) ) {
 			$flag = true;
 			$credentials = get_option( '_bsf_mautic_cnt_credentials' );
-			if ( isset( $credentials['access_token'] ) ){
+			if ( isset( $credentials['access_token'] ) ) {
 				$flag = false;
 			}
-		} elseif ( 'mautic_api' !== $get_mautic_connect_type && ( !empty( $mautic_user_pass_error_msg ) || ''!== $mautic_user_pass_error_msg ) )  {
+		} elseif ( 'mautic_api' !== $get_mautic_connect_type && ( !empty( $mautic_user_pass_error_msg ) || ''!== $mautic_user_pass_error_msg ) ) {
 			$flag = true;
 		}
 
@@ -296,7 +300,7 @@ function bsf_mautic_contact_setting_page() {
 		}
 
 		// If not authorized 
-		if( get_option( '_bsf_mautic_cnt_user_pass_credentials' ) || isset( $credentials['access_token'] ) ) { ?>
+		if( !$flag && ( get_option( '_bsf_mautic_cnt_credentials' ) || isset( $credentials['access_token'] ) ) ) { ?>
 		<p class="submit">
 			<span class="bsf-mautic-status-connected" style="background-color: #1baf1b;color: #fff;padding: 3px 6px;margin-right: 2em;"> <?php _e('Connected', 'contacts-in-mautic'); ?> </span>
 			<input type="submit" name="bsfm-cnt-disconnect-mautic" class="button" value="<?php esc_attr_e( 'Disconnect Mautic', 'contacts-in-mautic' ); ?>" />
@@ -383,10 +387,11 @@ function bsf_cnt_authenticate_update() {
 				update_option( 'mautic_user_pass_error_msg', $connect['error'] );
 			} else {
 				update_option( 'mautic_user_pass_error_msg', $connect['error'] );
+				$bsfm['total_count'] = $connect['body']->total;
+				update_option( 'bsf_mautic_connection_type', 'mautic_user_pass' );
+				update_option( '_bsf_mautic_cnt_credentials', $bsfm );
+				update_option( '_bsf_mautic_cnt_config', $bsfm );
 			}
-
-			update_option( 'bsf_mautic_connection_type', 'mautic_user_pass' );
-			update_option( '_bsf_mautic_cnt_user_pass_credentials', $bsfm );
 
 		} else {
 
