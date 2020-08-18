@@ -28,6 +28,9 @@ A very useful plugin to display your mautic contacts count on your website. This
 
 == Changelog ==
 
+=  Version 1.0.4  = 
+- Improvement: Compatibility with WordPress 5.5.
+
 =  Version 1.0.3  = 
 - Improvement: Add Username/Password API authentication method which is more reliable.
 
