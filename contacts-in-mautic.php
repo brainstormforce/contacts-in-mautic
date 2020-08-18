@@ -259,7 +259,7 @@ function bsf_mautic_contact_setting_page() {
 		<!-- Mautic Password -->
 		<div class="form-setting contacts-in-mautic-text-bsfm-password" style="display: none;">
 			<h4><?php _e( 'Mautic Password', 'contacts-in-mautic' ); ?></h4>
-			<input type="text" class="regular-text" name="bsfm-password" value=""
+			<input type="password" class="regular-text" name="bsfm-password" value=""
 			class="contacts-in-mautic-text"/>
 		</div>
 
@@ -375,7 +375,7 @@ function bsf_cnt_authenticate_update() {
 		if( isset( $_POST['bsfm_mautic_type'] ) && ( 'mautic_user_pass' === $_POST['bsfm_mautic_type'] ) ) {
 
 			if ( isset( $_POST['bsfm-username'] ) ) {
-				$bsfm['bsfm-username'] = sanitize_key( $_POST['bsfm-username'] );
+				$bsfm['bsfm-username'] = sanitize_user( $_POST['bsfm-username'] );
 			}
 			if ( isset( $_POST['bsfm-password'] ) ) {
 				$bsfm['bsfm-password'] = $_POST['bsfm-password'];
