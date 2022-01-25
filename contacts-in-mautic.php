@@ -3,7 +3,7 @@
  * Plugin Name:       Contacts in Mautic
  * Plugin URI:        http://brainstormforce.com
  * Description:       Get All Mautic Contacts Count using simple shortcode.
- * Version:           1.0.5
+ * Version:           1.0.6
  * Author:            Brainstormforce
  * Author URI:        http://brainstormforce.com
  * License: GNU General Public License v2.0
@@ -37,7 +37,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 // Set the BSF_CONTACT_MAUTIC_VERSION.
-define( 'BSF_CONTACT_MAUTIC_VERSION', '1.0.5' );
+define( 'BSF_CONTACT_MAUTIC_VERSION', '1.0.6' );
 
 // Include the auto update file.
 require_once plugin_dir_path( __FILE__ ) . 'classes/class-bsf-cm-auto-update.php';
